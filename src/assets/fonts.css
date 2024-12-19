@@ -1,0 +1,20 @@
+@font-face {
+  font-family: 'Belvina';
+  src: url('./fonts/Belvina.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Bubblebody_light';
+  src: url('./fonts/Bubblebody_light.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Candara';
+  src: url('./fonts/Candara.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
