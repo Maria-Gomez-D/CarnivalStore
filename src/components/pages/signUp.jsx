@@ -5,10 +5,10 @@ import { useNavigate, Link } from "react-router-dom";
 
 export default function SignUp() {
     const navigate = useNavigate();
-
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -18,16 +18,24 @@ export default function SignUp() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (email === "" || password === "") {
-            setError("Please enter email and password.");
-        } else {
-            try {
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                console.log(userCredential);
-                navigate('/welcome');
-            } catch (error) {
-                setError(error.message);
-            }
+        if (loading) return;
+
+        if (!email || !password) {
+            setError("Please enter both email and password.");
+            return;
+        }
+
+        try {
+            setLoading(true);
+            setError("");
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            console.log("User created successfully:", userCredential.user.email);
+            navigate('/welcome');
+        } catch (error) {
+            console.error("Signup error:", error);
+            setError(error.message || "Failed to create account");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -35,7 +43,11 @@ export default function SignUp() {
         <div className="flex justify-center items-center min-h-screen bg-beige">
             <div className="bg-white p-6 rounded-lg shadow-md max-w-md w-full">
                 <h1 className="text-center text-3xl text-darkblue mb-4 font-belvina">Sign Up</h1>
-                {error && <p className="text-red-500 mb-4">{error}</p>}
+                {error && (
+                    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                        <span className="block sm:inline">{error}</span>
+                    </div>
+                )}
                 <form onSubmit={handleSubmit}>
                     <div className="mb-4">
                         <label htmlFor="email" className="block text-darkblue font-candara mb-2">Email</label>
@@ -46,6 +58,7 @@ export default function SignUp() {
                             value={email}
                             onChange={handleInputChange}
                             className="w-full px-3 py-2 border border-darkblue rounded-md focus:outline-none focus:border-darkorange"
+                            disabled={loading}
                         />
                     </div>
                     <div className="mb-4">
@@ -57,18 +70,22 @@ export default function SignUp() {
                             value={password}
                             onChange={handleInputChange}
                             className="w-full px-3 py-2 border border-darkblue rounded-md focus:outline-none focus:border-darkorange"
+                            disabled={loading}
                         />
                     </div>
                     <button
                         type="submit"
-                        className="w-full bg-gradient-to-r from-darkorange to-orange text-beige py-2 rounded-full font-candara transition-all duration-200 hover:opacity-80"
+                        className="w-full bg-gradient-to-r from-darkorange to-orange text-beige py-2 rounded-md hover:opacity-90 transition-opacity font-candara disabled:opacity-50"
+                        disabled={loading}
                     >
-                        Sign Up
+                        {loading ? "Creating Account..." : "Sign Up"}
                     </button>
-                    <div className="text-right my-2 text-orange">
-                        <span>Already have an account? </span>
-                        <Link to="/account" className="hover:text-darkorange hover:underline">LOG IN</Link>
-                    </div>
+                    <p className="mt-4 text-center text-darkblue font-candara">
+                        Already have an account?{" "}
+                        <Link to="/account" className="text-darkorange hover:underline">
+                            Login
+                        </Link>
+                    </p>
                 </form>
             </div>
         </div>
