@@ -41,11 +41,15 @@ export default function ResetPassword() {
         
         if (password !== confirmPassword) {
             setError('Passwords do not match');
+            setPassword('');
+            setConfirmPassword('');
             return;
         }
 
         if (password.length < 6) {
             setError('Password should be at least 6 characters');
+            setPassword('');
+            setConfirmPassword('');
             return;
         }
 
@@ -58,6 +62,8 @@ export default function ResetPassword() {
         } catch (error) {
             console.error('Error resetting password:', error);
             setError(error.message);
+            setPassword('');
+            setConfirmPassword('');
         } finally {
             setLoading(false);
         }
@@ -73,18 +79,6 @@ export default function ResetPassword() {
         );
     }
 
-    if (error) {
-        return (
-            <div className="flex justify-center items-center min-h-screen bg-beige">
-                <div className="bg-white p-6 rounded-lg shadow-md max-w-md w-full text-center">
-                    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                        {error}
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
     return (
         <div className="flex justify-center items-center min-h-screen bg-beige">
             <div className="bg-white p-6 rounded-lg shadow-md max-w-md w-full">
@@ -94,6 +88,12 @@ export default function ResetPassword() {
                     <p className="text-center text-gray-600 mb-4 font-candara">
                         Resetting password for {email}
                     </p>
+                )}
+
+                {error && (
+                    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                        {error}
+                    </div>
                 )}
 
                 <form onSubmit={handleSubmit} className="space-y-4">
